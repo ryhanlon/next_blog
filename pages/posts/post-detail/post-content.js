@@ -1,27 +1,40 @@
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 
 import PostHeader from './post-header';
 import classes from './post-content.module.css';
 
-const DUMMY_POST = {
-	slug: 'getting-started-with-nextjs',
-	title: 'Getting Started with Nextjs',
-	image: 'getting-started-nextjs.png',
-	date: '2022-02-10',
-	content: '# This is a first post'
-}
-
-
-function PostContent() {
-	const { slug, image, title, content } = DUMMY_POST;
+function PostContent(props) {
+	const {slug, image, title, content} = props.post;
 	const imagePath = `/images/posts/${slug}/${image}`;
 
-	return (
-		<article className={classes.content}>
-			<PostHeader title={title} image={imagePath}/>
-			<ReactMarkdown>{content}</ReactMarkdown>
-		</article>
-	);
-}
+	const customRenderers = {
+		p(paragraph) {
+			const {node} = paragraph;
+			if (node.children[0].tagName === 'img') {
+				const image = node.children[0];
 
-export default PostContent;
+				return (
+					<div className={classes.image}>
+						<Image
+							src={image.properties.src}
+							alt={image.alt}
+							width={600}
+							height={300}
+						/>
+					</div>
+				);
+			}
+			return <p>{paragraph.children}</p>;
+		}
+	};
+
+			return (
+				<article className={classes.content}>
+					<PostHeader title={title} image={imagePath}/>
+					<ReactMarkdown components={customRenderers}>{content}</ReactMarkdown>
+				</article>
+			);
+		}
+
+		export default PostContent;
