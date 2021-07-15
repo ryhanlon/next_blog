@@ -36,7 +36,7 @@ function PostContent(props) {
 				<SyntaxHighlighter
 					style={atomDark}
 					language={language}
-					children={children}
+					children={children}np
 					/>
 			);
 		}
