@@ -1,31 +1,42 @@
+import { Fragment } from "react";
+import Head from "next/head";
+
 import PostContent from "./post-detail/post-content";
-import {getPostsData, getPostsFiles} from "../../lib/posts-util";
+import { getPostsData, getPostsFiles } from "../../lib/posts-util";
 
 function PostDetailPage(props) {
-	return <PostContent post={props.post}/>
+  return (
+    <Fragment>
+      <Head>
+        <title>{props.post.title}</title>
+        <meta name="description" content={props.post.excerpt} />
+      </Head>
+      <PostContent post={props.post} />
+    </Fragment>
+  );
 }
 
 export function getStaticProps(context) {
-	const {params} = context;
-	const {slug} = params;
+  const { params } = context;
+  const { slug } = params;
 
-	const postData = getPostsData(slug);
+  const postData = getPostsData(slug);
 
-	return {
-		props: {
-			post: postData
-		},
-		revalidate: 600
-	}
+  return {
+    props: {
+      post: postData,
+    },
+    revalidate: 600,
+  };
 }
 
 export function getStaticPaths() {
-	const postFileNames = getPostsFiles();
-	const slugs = postFileNames.map(fileName => fileName.replace(/\.md$/, ''));
-	return {
-		paths: slugs.map((slug) => ({params: {slug: slug}})),
-		fallback: false
-	};
+  const postFileNames = getPostsFiles();
+  const slugs = postFileNames.map((fileName) => fileName.replace(/\.md$/, ""));
+  return {
+    paths: slugs.map((slug) => ({ params: { slug: slug } })),
+    fallback: false,
+  };
 }
 
 export default PostDetailPage;
